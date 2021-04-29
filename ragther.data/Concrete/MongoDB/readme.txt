@@ -1,0 +1,2 @@
+If necessary, a document based database such as mongodb will be used.
+The abstract structure is common for every database type. The only thing to do is to create new documend based database methods according to these abstract signatures.

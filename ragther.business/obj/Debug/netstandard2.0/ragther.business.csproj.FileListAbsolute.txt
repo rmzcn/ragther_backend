@@ -1,0 +1,16 @@
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\bin\Debug\netstandard2.0\ragther.business.deps.json
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\bin\Debug\netstandard2.0\ragther.business.dll
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\bin\Debug\netstandard2.0\ragther.business.pdb
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\bin\Debug\netstandard2.0\ragther.data.dll
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\bin\Debug\netstandard2.0\ragther.entity.dll
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\bin\Debug\netstandard2.0\ragther.entity.pdb
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\bin\Debug\netstandard2.0\ragther.data.pdb
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\obj\Debug\netstandard2.0\ragther.business.csprojAssemblyReference.cache
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\obj\Debug\netstandard2.0\ragther.business.AssemblyInfoInputs.cache
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\obj\Debug\netstandard2.0\ragther.business.AssemblyInfo.cs
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\obj\Debug\netstandard2.0\ragther.business.csproj.CoreCompileInputs.cache
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\obj\Debug\netstandard2.0\ragther.business.csproj.CopyComplete
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\obj\Debug\netstandard2.0\ragther.business.dll
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\obj\Debug\netstandard2.0\ragther.business.pdb
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\bin\Debug\netstandard2.0\ragther.core.dll
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.business\bin\Debug\netstandard2.0\ragther.core.pdb

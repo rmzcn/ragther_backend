@@ -1,4 +1,6 @@
+using System;
 using System.ComponentModel.DataAnnotations;
+using ragther.entity.ViewModels;
 
 namespace ragther.entity
 {
@@ -17,6 +19,5 @@ namespace ragther.entity
         public int ProfileScore { get; set; }
         public int FriendCount { get; set; }
         public int HelpCount { get; set; }
-        
     }
 }

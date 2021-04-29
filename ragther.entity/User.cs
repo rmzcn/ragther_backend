@@ -8,6 +8,7 @@ namespace ragther.entity
     public class User
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
 
         [MaxLength(22, ErrorMessage="Max lenght is 22 char")]
@@ -20,9 +21,9 @@ namespace ragther.entity
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public string ProfileImageURL { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime LastLogin { get; set; }
 
         //navigations
 

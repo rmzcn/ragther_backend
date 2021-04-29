@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ragther.entity\ragther.entity.csproj" />
+    <ProjectReference Include="..\ragther.data\ragther.data.csproj" />
+    <ProjectReference Include="..\ragther.core\ragther.core.csproj" />
+  </ItemGroup>
+
+</Project>

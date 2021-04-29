@@ -1,0 +1,9 @@
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.core\bin\Debug\netstandard2.0\ragther.core.deps.json
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.core\bin\Debug\netstandard2.0\ragther.core.dll
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.core\bin\Debug\netstandard2.0\ragther.core.pdb
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.core\obj\Debug\netstandard2.0\ragther.core.csprojAssemblyReference.cache
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.core\obj\Debug\netstandard2.0\ragther.core.AssemblyInfoInputs.cache
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.core\obj\Debug\netstandard2.0\ragther.core.AssemblyInfo.cs
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.core\obj\Debug\netstandard2.0\ragther.core.csproj.CoreCompileInputs.cache
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.core\obj\Debug\netstandard2.0\ragther.core.dll
+C:\Users\ramaz\Desktop\ragther\ragther_backend\ragther.core\obj\Debug\netstandard2.0\ragther.core.pdb

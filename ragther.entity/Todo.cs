@@ -11,13 +11,17 @@ namespace ragther.entity
         public int CreatorUserId { get; set; }
         public User CreatorUser { get; set; }
         public string imageUrl { get; set; }
+        public string Description { get; set; }
         public DateTime UntilWhen { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public string Location { get; set; }//can be coordinates or address
+        public string LocationLatitude { get; set; }
+        public string LocationLongitude { get; set; }
         public int TodoConditionId { get; set; }
         public TodoCondition TodoCondition { get; set; }
         public int LikeCount { get; set; }
+        public int RemindCount { get; set; }
+        public int CommentCount { get; set; }
 
         //navigations
         public List<TodoTag> TodoTags { get; set; }

@@ -4149,7 +4149,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETStandard,Version=v2.0": [
-      "Microsoft.AspNetCore.Mvc.DataAnnotations >= *",
+      "Microsoft.AspNetCore.Mvc.DataAnnotations >= 2.2.0",
       "NETStandard.Library >= 2.0.3"
     ]
   },
@@ -4192,7 +4192,7 @@
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.DataAnnotations": {
             "target": "Package",
-            "version": "[*, )"
+            "version": "[2.2.0, )"
           },
           "NETStandard.Library": {
             "suppressParent": "All",
