@@ -21,6 +21,14 @@ using ragther.core.DataAccess;
 using ragther.business.Concrete.ProfileDetail;
 using ragther.business.Concrete.Comment;
 using ragther.business.Concrete.Friendship;
+using ragther.business.Concrete.Notice;
+using ragther.business.Concrete.Tag;
+using ragther.business.Concrete.TodoTag;
+using ragther.business.Concrete.WorkWith;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace ragther.service
 {
@@ -39,6 +47,13 @@ namespace ragther.service
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 );
+            
+            services.Configure<FormOptions>(o=>
+            {
+                o.ValueLengthLimit = int.MaxValue;
+                o.MultipartBodyLengthLimit = int.MaxValue;
+                o.MemoryBufferThreshold = int.MaxValue;
+            });
 
             // Injection for Repositories -- START
             // Entitiy Framework
@@ -67,6 +82,10 @@ namespace ragther.service
             services.AddScoped<IProfileDetailService,ProfileDetailManager>();
             services.AddScoped<ICommentService,CommentManager>();
             services.AddScoped<IFriendshipService,FriendshipManager>();
+            services.AddScoped<INoticeService,NoticeManager>();
+            services.AddScoped<IWorkWithService,WorkWithManager>();
+            services.AddScoped<ITagService,TagManager>();
+            services.AddScoped<ITodoTagService,TodoTagManager>();
             // Injection for Repositories -- END
 
             services.AddAutoMapper(cfg => cfg.AddProfile<AppMappingProfile>());
@@ -82,6 +101,13 @@ namespace ragther.service
             }
 
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles();
+            
+            app.UseStaticFiles( new StaticFileOptions{
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
+                RequestPath = new PathString("/Resources")
+            });
 
             app.UseRouting();
 

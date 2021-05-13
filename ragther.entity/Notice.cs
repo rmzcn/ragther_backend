@@ -13,6 +13,7 @@ namespace ragther.entity
         public int RelevantUserId { get; set; }
         public User RelevantUser { get; set; }
         public string RelevantURL { get; set; }// to-do, profile, comment or etc.
+        public bool isRead { get; set; }
 
     }
 }

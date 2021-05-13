@@ -30,7 +30,8 @@ namespace ragther.data.Concrete.EFCore
                         .Where(r => r.FriendshipCondition.ConditionId == FriendshipAndFriendshipCondition.Friend && r.SenderUser.UserName == requesterUserName)
                         .Any()
                         || 
-                        t.CreatorUser.UserName == requesterUserName)
+                        t.CreatorUser.UserName == requesterUserName
+                        || !t.CreatorUser.ProfileDetail.IsHiddenProfile )
                     .Select(t => new VMTodoGet{
                         TodoId = t.TodoId,
                         imageUrl = t.imageUrl,

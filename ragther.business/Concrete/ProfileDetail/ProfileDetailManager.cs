@@ -9,8 +9,72 @@ namespace ragther.business.Concrete.ProfileDetail
     public class ProfileDetailManager : IProfileDetailService
     {
         IProfileDetailRepository _profileDetailRepository;
-        public ProfileDetailManager(IProfileDetailRepository profileDetailRepository){
+        IUserRepository _userRepository;
+        
+        public ProfileDetailManager(IProfileDetailRepository profileDetailRepository, IUserRepository userRepository){
             _profileDetailRepository = profileDetailRepository;
+            _userRepository = userRepository;
+        }
+
+        public IResult SetFriendCount(int userId, bool add = true)
+        {
+            var userProifle = _profileDetailRepository.Get( p => p.UserId == userId);
+            if (userProifle == null)
+            {
+                return new ErrorResult(Messages.UserNotFound);
+            }
+
+            if (add)
+            {
+                userProifle.FriendCount ++;
+            }
+            else
+            {
+                userProifle.FriendCount --;
+            }
+            
+            _profileDetailRepository.Update(userProifle);
+            return new SuccessResult(Messages.FriendCountUpdated);
+        }
+
+        public IResult SetHelpCount(int userId, bool add = true)
+        {
+            var userProifle = _profileDetailRepository.Get( p => p.UserId == userId);
+            if (userProifle == null)
+            {
+                return new ErrorResult(Messages.UserNotFound);
+            }
+            if (add)
+            {
+                userProifle.HelpCount ++;
+            }
+            else
+            {
+                userProifle.HelpCount --;
+            }
+            _profileDetailRepository.Update(userProifle);
+            return new SuccessResult(Messages.HelpCountUpdated);
+        }
+
+        public IResult SetProfileScore(int userId, int score, bool add = true)
+        {
+            //score parametresi mevcut olan skorun üstüne eklenir yada çıkarılır
+            var userProifle = _profileDetailRepository.Get( p => p.UserId == userId);
+            if (userProifle == null)
+            {
+                return new ErrorResult(Messages.UserNotFound);
+            }
+            if (add)
+            {
+                userProifle.ProfileScore += score;
+            }
+            else
+            {
+                userProifle.ProfileScore -= score;
+            }
+            
+            _profileDetailRepository.Update(userProifle);
+            return new SuccessResult(Messages.ProfileScoreUpdated);
         }
 
         public IDataResult<entity.ProfileDetail> GetProfileDetailsByUserID(int userId)
@@ -28,6 +92,10 @@ namespace ragther.business.Concrete.ProfileDetail
         public IResult IsHiddenProfile(string userName)
         {
             var user = _profileDetailRepository.Get(u => u.User.UserName == userName);
+            if (user == null)
+            {
+                return new ErrorResult();
+            }
             bool result = user.IsHiddenProfile;
             if (result)
             {
@@ -36,11 +104,6 @@ namespace ragther.business.Concrete.ProfileDetail
             }
             //profile is not hidden
             return new ErrorResult();
-        }
-
-        public IResult Update(entity.ProfileDetail entity)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

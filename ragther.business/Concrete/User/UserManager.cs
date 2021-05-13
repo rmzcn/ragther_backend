@@ -7,6 +7,7 @@ using ragther.business.Constants;
 using ragther.Core.Utilities.Results;
 using ragther.data.Abstract;
 using ragther.entity.ViewModels;
+using ragther.data.MessagesForRelations;
 
 namespace ragther.business.Concrete.User
 {
@@ -15,10 +16,14 @@ namespace ragther.business.Concrete.User
         IUserRepository _userRepository;
         IMapper _mapper;
         IFriendshipService _friendshipService;
-        public UserManager(IUserRepository userRepository, IMapper mapper, IFriendshipService friendshipService){
+        IProfileDetailRepository _profileDetailRepository;
+        INoticeService _noticeService;
+        public UserManager(IUserRepository userRepository, IMapper mapper, IFriendshipService friendshipService, IProfileDetailRepository profileDetailRepository, INoticeService noticeService){
             _userRepository = userRepository;
             _mapper = mapper;
             _friendshipService = friendshipService;
+            _profileDetailRepository = profileDetailRepository;
+            _noticeService = noticeService;
         }
 
         public IResult Register(VMUserRegisterPost newUser)
@@ -45,6 +50,11 @@ namespace ragther.business.Concrete.User
                     entity.User user = _mapper.Map<entity.User>(newUser);
                     user.CreatedAt = DateTime.Now;
                     _userRepository.Add(user);
+                    _profileDetailRepository.Add(new entity.ProfileDetail(){
+                        UserId = user.UserId,
+                        IsHiddenProfile = false,
+                        ProfileDescription = "Merhabalar. Buralarda Yeniyim."
+                    });
                     return new SuccessResult(Messages.UserAdded + user.UserName);
                 }
             }
@@ -59,20 +69,27 @@ namespace ragther.business.Concrete.User
             // TODO - requester user name yerine json web tokenler ile güvenlik sağlanabilir. Bu metodun yapısı bozulmadan token üzerinden username alınabilir. token alma işlemi controller üzerinden yapılırsa çok iyi bir yaklaşım olmaz ancak sistem neredeyse hiç bir değişiklik yapmadan token ile güvenlik sağlanabilir.
             
             // TODO - Userlar arkadaş değilse detail alanını null gönder
-            var friendshipServiceData = _friendshipService.isFriends(userName,requesterUserName);
-            if (friendshipServiceData.Success)
-            {
-                var result = _userRepository.GetUserProfile(userName);
-                return new SuccessDataResult<VMUserProfileGet>(result);
-            }
-            else if (friendshipServiceData.Message == Messages.UsersAreNotFriends)
-            {
-                return new ErrorDataResult<VMUserProfileGet>(Messages.UsersAreNotFriends);
-            }
-            else
+            // var friendshipServiceData = _friendshipService.isFriends(userName,requesterUserName);
+            var targetUserModel = _userRepository.Get(u => u.UserName == userName);
+            var requesterUserModel = _userRepository.Get(u => u.UserName == requesterUserName);
+            if (requesterUserModel == null || targetUserModel == null)
             {
                 return new ErrorDataResult<VMUserProfileGet>(Messages.UserNotFound);
             }
+            // if (friendshipServiceData.Success || userName == requesterUserName)
+            // {
+                var result = _userRepository.GetUserProfile(userName);
+                _noticeService.CreateNotice(requesterUserModel.UserId, targetUserModel.UserId, NoticeTypes.LookedProfile);
+                return new SuccessDataResult<VMUserProfileGet>(result);
+            // }
+            // else if (friendshipServiceData.Message == Messages.UsersAreNotFriends)
+            // {
+            //     return new ErrorDataResult<VMUserProfileGet>(Messages.UsersAreNotFriends);
+            // }
+            // else
+            // {
+            //     
+            // }
             
         }
 

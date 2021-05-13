@@ -27,6 +27,9 @@ namespace ragther.data.Migrations
                         .HasColumnType("varchar(500) CHARACTER SET utf8mb4")
                         .HasMaxLength(500);
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<bool>("IsOffer")
                         .HasColumnType("tinyint(1)");
 
@@ -37,6 +40,9 @@ namespace ragther.data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("offerStatus")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -158,6 +164,9 @@ namespace ragther.data.Migrations
 
                     b.Property<int>("RelevantUserId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("isRead")
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("NoticeId");
 

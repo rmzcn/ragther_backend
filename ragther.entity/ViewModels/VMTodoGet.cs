@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ragther.entity.Abstract;
 
 namespace ragther.entity.ViewModels
@@ -7,6 +8,8 @@ namespace ragther.entity.ViewModels
     {
         public int TodoId { get; set; }
         public VMInnerUserInfo userInfo { get; set; }
+        public List<string> tags { get; set; }
+        public List<string> workWiths { get; set; }
         public string imageUrl { get; set; }
         public string Description { get; set; }
         public DateTime UntilWhen { get; set; }

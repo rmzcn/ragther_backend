@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -18,8 +19,10 @@ namespace ragther.entity
         public int UserId { get; set; }
         public User User { get; set; }
         public bool IsOffer { get; set; }
+        public int offerStatus { get; set; }
 
         [MaxLength(500)]
         public string Content { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

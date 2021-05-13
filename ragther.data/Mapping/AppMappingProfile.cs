@@ -24,6 +24,9 @@ namespace ragther.data.Mapping
             // PROFILE DETAIL ENTITY --START--
             CreateMap<entity.ProfileDetail, VMUserProfileDetailGet>();
             CreateMap<VMUserProfileDetailGet, entity.ProfileDetail>();
+
+            CreateMap<entity.ProfileDetail, VMProfileDetailUpdatePost>();
+            CreateMap<VMProfileDetailUpdatePost, entity.ProfileDetail>();
             // PROFILE DETAIL ENTITY --END--
 
             //TO-DO ENTITY --START--
@@ -33,9 +36,27 @@ namespace ragther.data.Mapping
             CreateMap<entity.Todo, VMTodoGet>();
             CreateMap<VMTodoGet, entity.Todo>();
 
-            CreateMap<VMTodoUpdatePost, entity.Todo>();
-            CreateMap<entity.Todo, VMTodoUpdatePost>();
+            CreateMap<VMTodoUpdatePost, entity.Todo>().ForAllOtherMembers(x => x.Ignore());
+            CreateMap<entity.Todo, VMTodoUpdatePost>().ForAllOtherMembers(x => x.Ignore());
             //TO-DO ENTITY --END--
+
+            //COMMENT ENTITY --START--
+            CreateMap<entity.Comment, VMNewCommentPost>();
+            CreateMap<VMNewCommentPost, entity.Comment>();
+
+            CreateMap<VMCommentGet, entity.Comment>();
+            CreateMap<entity.Comment, VMCommentGet>();
+            //COMMENT ENTITY --END--
+            
+
+            //TAG ENTITY --START--
+            CreateMap<VMTagGet, entity.Tag>();
+            CreateMap<entity.Tag, VMTagGet>();
+
+            CreateMap<VMNewTagPost, entity.Tag>();
+            CreateMap<entity.Tag, VMNewTagPost>();
+            //TAG ENTITY --END--
+            
         }
     }
 }
