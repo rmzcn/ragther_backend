@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "oaKqEQz2b82HpUs6rclHxs7vYgvKZFeDVlcGMPhITJo/69UaGitNPM0k73173aY/olUKU5+NNdH1+CZ8yN67Yg==",
+  "dgSpecHash": "szJaGOoMeHqLa59kkxwvS3QlUjbVjr4Zpg2IqIWuH7kQDs06JgyYq6vOA8sG7WSG6k2yUqisf7QhtLMsT1/qxA==",
   "success": true,
   "projectFilePath": "C:\\Users\\ramaz\\Desktop\\ragther\\ragther_backend\\ragther.service\\ragther.service.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ramaz\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\ramaz\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.1\\automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",
+    "C:\\Users\\ramaz\\.nuget\\packages\\microsoft.aspnet.signalr\\2.4.2\\microsoft.aspnet.signalr.2.4.2.nupkg.sha512",
     "C:\\Users\\ramaz\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\ramaz\\.nuget\\packages\\microsoft.aspnetcore.authentication.core\\2.2.0\\microsoft.aspnetcore.authentication.core.2.2.0.nupkg.sha512",
     "C:\\Users\\ramaz\\.nuget\\packages\\microsoft.aspnetcore.authorization\\2.2.0\\microsoft.aspnetcore.authorization.2.2.0.nupkg.sha512",

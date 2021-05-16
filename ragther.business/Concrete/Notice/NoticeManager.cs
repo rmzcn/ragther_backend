@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using AutoMapper;
 using ragther.business.Abstract;
@@ -35,7 +36,8 @@ namespace ragther.business.Concrete.Notice
                 RelevantUserId = userIdTo,
                 OwnerUserId = userIdFrom,
                 RelevantURL = relevantIdOrUrl,
-                isRead = false
+                isRead = false,
+                CreatedAt = DateTime.Now
             };
             _noticeRepository.Add(notice);
             return new SuccessResult();
@@ -47,7 +49,7 @@ namespace ragther.business.Concrete.Notice
             {
                 return new ErrorResult(Messages.UserNotFound);
             }
-            var notices = _noticeRepository.GetListByFilterOrAll(n => n.OwnerUser.UserName == requesterUserName);
+            var notices = _noticeRepository.GetListByFilterOrAll(n => n.RelevantUser.UserName == requesterUserName);
             foreach (var notice in notices)
             {
                 _noticeRepository.Delete(notice);
@@ -58,14 +60,32 @@ namespace ragther.business.Concrete.Notice
         public IDataResult<List<VMNoticeGet>> GetNotices(string requesterUserName)
         {
             // TODO - Bu fonksiyonda bütün bildirimler geri gider. Burayı belirli sayıda bildirim gidecek şekilde yeniden düzenle
+
             var user = _userRepository.Get(u => u.UserName == requesterUserName);
             if (user == null)
             {
                 return new ErrorDataResult<List<VMNoticeGet>>(Messages.UserNotFound);
             }
-            var notices = _mapper.Map<List<VMNoticeGet>>(_noticeRepository.GetListByFilterOrAll( n => n.RelevantUser.UserName == requesterUserName));
+            var dbNotices = _noticeRepository.GetListByFilterOrAll( n => n.RelevantUser.UserName == requesterUserName);
+            dbNotices.Sort((x, y) => DateTime.Compare(y.CreatedAt, x.CreatedAt));
+
+            var notices = _mapper.Map<List<VMNoticeGet>>(dbNotices);
             return new SuccessDataResult<List<VMNoticeGet>>(notices);
         }
-        
+
+        public IResult ReadNotices(string requesterUserName)
+        {
+            if (_userRepository.Get(u => u.UserName == requesterUserName) == null)
+            {
+                return new ErrorResult(Messages.UserNotFound);
+            }
+            var notices = _noticeRepository.GetListByFilterOrAll(n => n.RelevantUser.UserName == requesterUserName);
+            foreach (var notice in notices)
+            {
+                notice.isRead=true;
+                _noticeRepository.Update(notice);
+            }
+            return new SuccessResult(Messages.ReadedAllNotices);
+        }
     }
 }

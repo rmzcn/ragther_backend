@@ -56,7 +56,12 @@ namespace ragther.data.Mapping
             CreateMap<VMNewTagPost, entity.Tag>();
             CreateMap<entity.Tag, VMNewTagPost>();
             //TAG ENTITY --END--
-            
+
+
+            //NOTICE ENTITY --START--
+            CreateMap<VMNoticeGet, entity.Notice>();
+            CreateMap<entity.Notice, VMNoticeGet>();
+            //NOTICE ENTITY --END--
         }
     }
 }

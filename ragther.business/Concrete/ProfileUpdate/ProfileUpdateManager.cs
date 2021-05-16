@@ -31,12 +31,12 @@ namespace ragther.business.Concrete.ProfileUpdate
 
             try
             {
-                var folderName = Path.Combine("Resources","ProfileImages");
+                var folderName = Path.Combine("Resources","Images","ProfileImages");
                 var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
 
                 if (file.Length > 0)
                 {
-                    var fileName = user.UserId.ToString() + "_" + user.UserName + "_" + DateTime.Now.ToString();
+                   var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
                     var fullPath = Path.Combine(pathToSave, fileName);
                     var dbPath = Path.Combine(folderName, fileName);
 
@@ -45,7 +45,6 @@ namespace ragther.business.Concrete.ProfileUpdate
                         file.CopyTo(stream);
                     }
 
-                    //yolu düzelt. hatalı olabilir
                     user.ProfileImageURL = dbPath;
                     _userRepository.Update(user);
                     return new SuccessResult(Messages.FileUploaded);
@@ -66,7 +65,7 @@ namespace ragther.business.Concrete.ProfileUpdate
                 return new ErrorResult(Messages.UserNotFound);
             }
             var profileDetail = _profileDetailRepository.Get( pd => pd.UserId == user.UserId);
-            profileDetail.IsHiddenProfile = visible;
+            profileDetail.IsHiddenProfile = !visible;
             _profileDetailRepository.Update(profileDetail);
 
             string resultMessage;
@@ -95,6 +94,9 @@ namespace ragther.business.Concrete.ProfileUpdate
             return new SuccessResult(Messages.HiddenProfileDescriptionUpdated);
         }
 
+
+        //DANGER--->DONT USE THIS FUNCTION FOR PASSWORD UPDATING
+        //USER MANAGER CLASS USES FOR PASSWORD UPDATING
         public IResult UpdatePassword(string requesterUserName, string newPassword)
         {
             var user = _userRepository.Get(u => u.UserName == requesterUserName);

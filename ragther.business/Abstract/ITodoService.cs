@@ -15,6 +15,6 @@ namespace ragther.business.Abstract
         IDataResult<List<VMTodoGet>> GetTodosByUserName(string userName, string requesterUserName);
         IDataResult<VMTodoGet> GetTodoById(int todoID, string requesterUserName);
         IDataResult<List<VMTodoGet>> GetTodoByTagName(string tagName, string requesterUserName);
-        IResult UploadTodoImage(int todoId, string requesterUserName, IFormFile file, bool isFileExist);
+        IResult UploadTodoImage(int todoId, string requesterUserName, IFormFile file);
     }
 }

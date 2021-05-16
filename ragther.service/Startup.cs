@@ -25,10 +25,16 @@ using ragther.business.Concrete.Notice;
 using ragther.business.Concrete.Tag;
 using ragther.business.Concrete.TodoTag;
 using ragther.business.Concrete.WorkWith;
+using ragther.service.Hubs;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using Microsoft.AspNetCore.Http;
+using ragther.business.Concrete.ProfileUpdate;
+using ragther.business.Concrete.Like;
+using ragther.business.Concrete.MailUpdate;
+using ragther.business.Concrete.Remind;
+using ragther.business.Concrete.TagsOfInterest;
 
 namespace ragther.service
 {
@@ -54,6 +60,18 @@ namespace ragther.service
                 o.MultipartBodyLengthLimit = int.MaxValue;
                 o.MemoryBufferThreshold = int.MaxValue;
             });
+            
+
+            services.AddCors(options => 
+            { 
+                options.AddPolicy("CorsPolicy", builder => builder
+                .WithOrigins("http://localhost:4200")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
+            });
+
+            services.AddSignalR();
 
             // Injection for Repositories -- START
             // Entitiy Framework
@@ -86,6 +104,12 @@ namespace ragther.service
             services.AddScoped<IWorkWithService,WorkWithManager>();
             services.AddScoped<ITagService,TagManager>();
             services.AddScoped<ITodoTagService,TodoTagManager>();
+            services.AddScoped<IProfileUpdateService,ProfileUpdateManager>();
+            services.AddScoped<ILikeService,LikeManager>();
+            services.AddScoped<IMailUpdateService,MailUpdateManager>();
+            services.AddScoped<IRemindService,RemindManager>();
+            services.AddScoped<ITagsOfInterestService,TagsOfInterestManager>();
+
             // Injection for Repositories -- END
 
             services.AddAutoMapper(cfg => cfg.AddProfile<AppMappingProfile>());
@@ -109,6 +133,8 @@ namespace ragther.service
                 RequestPath = new PathString("/Resources")
             });
 
+            app.UseCors("CorsPolicy");
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -116,6 +142,7 @@ namespace ragther.service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chat");
             });
         }
     }

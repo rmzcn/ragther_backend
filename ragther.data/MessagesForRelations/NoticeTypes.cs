@@ -11,6 +11,7 @@ namespace ragther.data.MessagesForRelations
         public static int OfferAccepted = 7;
         public static int OfferRejected = 8;
         public static int LookedProfile = 9;
+        public static int MailUpdated = 10;
 
         public static string getNoticeTypeByID(int conID){
             switch (conID)
@@ -33,6 +34,8 @@ namespace ragther.data.MessagesForRelations
                     return "offer rejected";
                 case 9:
                     return "looked profile";
+                case 10:
+                    return "mail updated";
                 default:
                     return "none";
             }

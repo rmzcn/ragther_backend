@@ -22,6 +22,10 @@ namespace ragther.business.Concrete.WorkWith
 
         public IResult AddWorker(int todoId, string workerUserName)
         {
+            //TODO- Teklif olup olmadığı kontrol edilmeli.
+            //bir bool parametre ile sadece teklif ile eklemek haricinde normal bir şekilde teklif olmadan da eklenebilir
+
+
             var user = _userRepository.Get(u => u.UserName == workerUserName);
             if (user == null)
             {
@@ -32,12 +36,17 @@ namespace ragther.business.Concrete.WorkWith
             {
                 return new ErrorResult(Messages.TodoNotFound);
             }
+            var workWith = _workWithRepository.Get(w => w.UserId == user.UserId && w.TodoId == todoId);
+            if (workWith != null)
+            {
+                return new ErrorResult(Messages.WorkerAlreadyExistInTodo);
+            }
             var newWorkWith = new entity.WorkWith(){
                 TodoId = todoId,
                 UserId = user.UserId
             };
             _workWithRepository.Add(newWorkWith);
-            return new SuccessResult();
+            return new SuccessResult(Messages.WorkerAddedToTodo);
         }
 
         public IResult DeleteWorker(int todoId, string workerUserName)

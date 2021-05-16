@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace ragther.entity
@@ -14,6 +15,7 @@ namespace ragther.entity
         public User RelevantUser { get; set; }
         public string RelevantURL { get; set; }// to-do, profile, comment or etc.
         public bool isRead { get; set; }
+        public DateTime CreatedAt { get; set; }
 
     }
 }

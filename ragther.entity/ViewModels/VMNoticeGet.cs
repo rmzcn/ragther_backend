@@ -1,3 +1,5 @@
+using System;
+
 namespace ragther.entity.ViewModels
 {
     public class VMNoticeGet
@@ -8,5 +10,6 @@ namespace ragther.entity.ViewModels
         public bool isRead { get; set; }
         public int NoticeTypeId { get; set; }
         public string RelevantURL { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

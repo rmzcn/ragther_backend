@@ -13,5 +13,8 @@ namespace ragther.business.Abstract
         IDataResult<List<VMUserSearchResultGet>> GetUsersBySearchFilterString(string filterString);
         IResult IsMailRegistered(string email);
         IResult IsUserNameRegistered(string userName);
+        IResult ForgetPassword(string requesterUserName);
+        IResult SetPassword(string requesterUserName, string oldPassword, string newPassword);
+        IResult GetPassword(string requesterUserName);
     }
 }

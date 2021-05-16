@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ragther.business.Abstract;
 using ragther.business.Constants;
@@ -60,12 +61,15 @@ namespace ragther.business.Concrete.TagsOfInterest
 
             var interestedTags = _tagsOfInterestRepository.GetListByFilterOrAll( it => it.UserId == user.UserId);
 
+            // Console.WriteLine(tagIdList.Count);
+
             entity.TagsOfInterest interestedTag;
             foreach (var tagId in tagIdList)
             {
                 //gereksiz db trafiği. burayı düzelt
                 interestedTag = _tagsOfInterestRepository.Get(it => it.TagId == tagId && it.UserId == user.UserId);
-                if (interestedTag == null)
+                var tag = _tagRepository.Get(t => t.TagId == tagId);
+                if (interestedTag == null && tag != null)
                 {
                     _tagsOfInterestRepository.Add(new entity.TagsOfInterest(){
                         TagId = tagId,
@@ -84,6 +88,7 @@ namespace ragther.business.Concrete.TagsOfInterest
                     });
                 }
             }
+
             return new SuccessResult(Messages.TagsOfInterestUpdated);
             
         }

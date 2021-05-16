@@ -71,6 +71,23 @@ namespace ragther.service.Controllers
         }
 
         [AllowAnonymous]
+        [HttpPost]
+        [Route("imageupload")]
+        public ActionResult UploadTodoIamge(int todoId, string requesterUserName)
+        {
+            var file = Request.Form.Files[0];
+            var result = _todoService.UploadTodoImage(todoId,requesterUserName,file);
+            if (result.Success)
+            {
+                return Ok(result.Message);
+            }
+            else
+            {
+                return BadRequest(result.Message);
+            }
+        }
+
+        [AllowAnonymous]
         [HttpGet]
         [Route("delete")]
         public ActionResult DeleteTodo(string requesterUserName, int todoID){

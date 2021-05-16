@@ -382,7 +382,7 @@ namespace ragther.business.Concrete.Todo
             return new SuccessDataResult<List<VMTodoGet>>(result);
         }
 
-        public IResult UploadTodoImage(int todoId, string requesterUserName, IFormFile file, bool isFileExist)
+        public IResult UploadTodoImage(int todoId, string requesterUserName, IFormFile file)
         {
             var user = _userRepository.Get(u => u.UserName == requesterUserName);
             if (user == null)
@@ -398,22 +398,26 @@ namespace ragther.business.Concrete.Todo
 
             try
             {
-                var folderName = Path.Combine("Resources","PostImages");
+                var folderName = Path.Combine("Resources","Images","PostImages");
                 var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-
+                
                 if (file.Length > 0)
                 {
-                    var fileName = todo.TodoId.ToString() + "_" + user.UserId.ToString() + user.UserName + "_" + DateTime.Now.ToString();
+                    
+                    // var fileName = todo.TodoId.ToString() + "_" + user.UserId.ToString() + user.UserName + "_" + DateTime.Now.ToString()+Path.GetExtension(file.FileName);
 
-                    var fullPath = Path.Combine(pathToSave, fileName);
-                    var dbPath = Path.Combine(folderName, fileName);
+                    var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
 
+                    var fullPath = Path.Combine(pathToSave, fileName);          
+                    
                     using (var stream = new FileStream(fullPath, FileMode.Create))
                     {
                         file.CopyTo(stream);
+
                     }
 
-                    //yolu düzelt. hatalı olabilir
+                    var dbPath = Path.Combine(folderName, fileName);
+
                     todo.imageUrl = dbPath;
                     _todoRepository.Update(todo);
                     return new SuccessResult(Messages.FileUploaded);
@@ -424,7 +428,6 @@ namespace ragther.business.Concrete.Todo
             {
                return new ErrorResult(ex.Message);
             }
-
         }
     }
 }

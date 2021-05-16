@@ -153,6 +153,9 @@ namespace ragther.data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<int>("NoticeTypeId")
                         .HasColumnType("int");
 

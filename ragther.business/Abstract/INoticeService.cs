@@ -10,5 +10,6 @@ namespace ragther.business.Abstract
         IResult CreateNotice(int userIdFrom, int userIdTo, int noticeTypeId, string relevantIdOrUrl = null);
         IDataResult<List<VMNoticeGet>> GetNotices(string requesterUserName);
         IResult DeleteAllNotices(string requesterUserName);
+        IResult ReadNotices(string requesterUserName);
     }
 }

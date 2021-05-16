@@ -8,6 +8,11 @@ using ragther.Core.Utilities.Results;
 using ragther.data.Abstract;
 using ragther.entity.ViewModels;
 using ragther.data.MessagesForRelations;
+using ragther.business.Generators.Abstract;
+using ragther.business.Generators;
+using ragther.business.Generators.Base;
+using ragther.business.Helpers;
+using ragther.business.Concrete.MailUpdate;
 
 namespace ragther.business.Concrete.User
 {
@@ -53,7 +58,7 @@ namespace ragther.business.Concrete.User
                     _profileDetailRepository.Add(new entity.ProfileDetail(){
                         UserId = user.UserId,
                         IsHiddenProfile = false,
-                        ProfileDescription = "Merhabalar. Buralarda Yeniyim."
+                        ProfileDescription = DefaultMessages.ProfileDescription
                     });
                     return new SuccessResult(Messages.UserAdded + user.UserName);
                 }
@@ -68,7 +73,6 @@ namespace ragther.business.Concrete.User
         {
             // TODO - requester user name yerine json web tokenler ile güvenlik sağlanabilir. Bu metodun yapısı bozulmadan token üzerinden username alınabilir. token alma işlemi controller üzerinden yapılırsa çok iyi bir yaklaşım olmaz ancak sistem neredeyse hiç bir değişiklik yapmadan token ile güvenlik sağlanabilir.
             
-            // TODO - Userlar arkadaş değilse detail alanını null gönder
             // var friendshipServiceData = _friendshipService.isFriends(userName,requesterUserName);
             var targetUserModel = _userRepository.Get(u => u.UserName == userName);
             var requesterUserModel = _userRepository.Get(u => u.UserName == requesterUserName);
@@ -123,7 +127,7 @@ namespace ragther.business.Concrete.User
             VMUserLoggedinGet result = _userRepository.Login(userName,password);
             if (result == null)
             {
-                return new ErrorDataResult<VMUserLoggedinGet>(Messages.UserNameOrPasswordİncorrect);
+                return new ErrorDataResult<VMUserLoggedinGet>(Messages.UserNameOrPasswordIncorrect);
             }
             return new SuccessDataResult<VMUserLoggedinGet>(result);
         }
@@ -134,5 +138,57 @@ namespace ragther.business.Concrete.User
             return new SuccessDataResult<List<VMUserSearchResultGet>>(result);
         }
 
+        public IResult ForgetPassword(string requesterUserName)
+        {
+            //TODO Şİfreyi db de de güncelle
+            //TODO Şifre kısa olsun 
+            var user = _userRepository.Get( u => u.UserName == requesterUserName);
+            if (user == null)
+            {
+                return new ErrorResult(Messages.UserNotFound);
+            }
+
+            PasswordGenerator passwordGenerator = new PasswordGenerator();
+            string newPass = passwordGenerator.Generate();
+
+            //yeni şifresi oluşturuldu ve kullanıcıya gönderiliyor
+            var result = MailHelper.SendEmail(user.Email, MailTemplate.GetRepassMailBody(user.UserName, newPass),MailSubjects.RePassword);
+            
+            if (!result.Success)
+            {
+                return new ErrorResult(Messages.RepassEmailNotSended);
+            }
+            //updating user's password 
+            user.Password = newPass;
+            _userRepository.Update(user);
+            return new SuccessResult(Messages.RepassEmailSended);
+        }
+
+        public IResult SetPassword(string requesterUserName, string oldPassword, string newPassword)
+        {
+            var user = _userRepository.Get( u => u.UserName == requesterUserName);
+            if (user == null)
+            {
+                return new ErrorResult(Messages.UserNotFound);
+            }
+
+            if (user.Password == oldPassword)
+            {
+                user.Password = newPassword;
+                _userRepository.Update(user);
+                return new SuccessResult(Messages.PasswordUpdated);
+            }
+            return new ErrorResult(Messages.PasswordsDontMatch);
+        }
+
+        public IResult GetPassword(string requesterUserName)
+        {
+            var user = _userRepository.Get( u => u.UserName == requesterUserName);
+            if (user == null)
+            {
+                return new ErrorResult(Messages.UserNotFound);
+            }
+            return new SuccessResult(user.Password);
+        }
     }
 }

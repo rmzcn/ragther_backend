@@ -116,13 +116,19 @@ namespace ragther.business.Concrete.Friendship
 
             if (conditionResult.Success
                 &&
-                FriendshipAndFriendshipCondition.getFriendshipConditionIdByName(conditionResult.Data) 
+                FriendshipAndFriendshipCondition.getFriendshipConditionIdByName(conditionResult.Message) 
                     == 
                 FriendshipAndFriendshipCondition.RequestWaiting)
             {
                 //reddetme ve bildirim işlemleri
                 _noticeService.CreateNotice(rejecterUserModel.UserId, senderUserModel.UserId, NoticeTypes.FriendshipReject);
-                _friendshipRepository.Delete(_friendshipRepository.Get( fr => fr.SenderUserId == senderUserModel.UserId && rejecterUserModel.UserId == fr.RecipientUserId));
+
+                var requestWillRejected = _friendshipRepository.Get( fr => fr.SenderUserId == senderUserModel.UserId && rejecterUserModel.UserId == fr.RecipientUserId);
+                if (requestWillRejected == null)
+                {
+                    return new ErrorResult(Messages.FriendshipNotFound);
+                }
+                _friendshipRepository.Delete(requestWillRejected);
 
                 //profil puanı güncelleme
                 _profileDetailService.SetProfileScore(rejecterUserModel.UserId, Score.FriendshipRejectScore);
@@ -132,7 +138,7 @@ namespace ragther.business.Concrete.Friendship
 
             else if (conditionResult.Success
                     &&
-                    FriendshipAndFriendshipCondition.getFriendshipConditionIdByName(conditionResult.Data) 
+                    FriendshipAndFriendshipCondition.getFriendshipConditionIdByName(conditionResult.Message) 
                     == 
                     FriendshipAndFriendshipCondition.NotExistTableValue)
             {
@@ -160,7 +166,7 @@ namespace ragther.business.Concrete.Friendship
 
             if (conditionResult.Success
                 &&
-                FriendshipAndFriendshipCondition.getFriendshipConditionIdByName(conditionResult.Data) 
+                FriendshipAndFriendshipCondition.getFriendshipConditionIdByName(conditionResult.Message) 
                     == 
                 FriendshipAndFriendshipCondition.Friend)
             {
@@ -184,7 +190,7 @@ namespace ragther.business.Concrete.Friendship
 
             else if (conditionResult.Success
                     &&
-                    FriendshipAndFriendshipCondition.getFriendshipConditionIdByName(conditionResult.Data) 
+                    FriendshipAndFriendshipCondition.getFriendshipConditionIdByName(conditionResult.Message) 
                     == 
                     FriendshipAndFriendshipCondition.NotExistTableValue)
             {
@@ -198,7 +204,6 @@ namespace ragther.business.Concrete.Friendship
         {
             //senderUserName --> user that create friendship request 
             //recipientUserName --> user that friendship request recipient
-            //  TODO - Bildiim oluştur
             entity.User senderUserModel = _userRepository.Get(u => u.UserName == senderUserName);
             entity.User recipientUserModel = _userRepository.Get(u => u.UserName == recipientUserName);
             if (senderUserModel == null || recipientUserModel == null)
@@ -211,15 +216,14 @@ namespace ragther.business.Concrete.Friendship
             }
 
             var conditionResult = this.GetFriendshipCondition(senderUserName, recipientUserName);
-
             if (conditionResult.Success
                 &&
-                FriendshipAndFriendshipCondition.getFriendshipConditionIdByName(conditionResult.Data) 
+                FriendshipAndFriendshipCondition.getFriendshipConditionIdByName(conditionResult.Message) 
                     == 
                 FriendshipAndFriendshipCondition.RequestWaiting)
             {
                 //kabul etme ve bildirim işlemleri
-                _noticeService.CreateNotice(senderUserModel.UserId, senderUserModel.UserId, NoticeTypes.FriendshipAcceppted);
+                _noticeService.CreateNotice(recipientUserModel.UserId, senderUserModel.UserId,NoticeTypes.FriendshipAcceppted);
 
                 //profil bilgilerini güncelleme
                 _profileDetailService.SetProfileScore(senderUserModel.UserId, Score.FriendshipScore);
@@ -242,7 +246,7 @@ namespace ragther.business.Concrete.Friendship
 
             else if (conditionResult.Success
                     &&
-                    FriendshipAndFriendshipCondition.getFriendshipConditionIdByName(conditionResult.Data) 
+                    FriendshipAndFriendshipCondition.getFriendshipConditionIdByName(conditionResult.Message) 
                     == 
                     FriendshipAndFriendshipCondition.NotExistTableValue)
             {

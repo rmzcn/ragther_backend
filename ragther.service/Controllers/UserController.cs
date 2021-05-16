@@ -56,6 +56,54 @@ namespace ragther.service.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet]
+        [Route("password/refresh")]
+        public ActionResult ForgetPassword(string requesterUserName)
+        {
+            var result = _userService.ForgetPassword(requesterUserName);
+            if (result.Success)
+            {
+                return Ok(result.Message);
+            }
+            else
+            {
+                return BadRequest(result.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("password/update")]
+        public ActionResult SetPassword(string requesterUserName, string oldPassword, string newPassword)
+        {
+            var result = _userService.SetPassword(requesterUserName,oldPassword,newPassword);
+            if (result.Success)
+            {
+                return Ok(result.Message);
+            }
+            else
+            {
+                return BadRequest(result.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("password/get")]
+        public ActionResult GetPassword(string requesterUserName)
+        {
+            var result = _userService.GetPassword(requesterUserName);
+            if (result.Success)
+            {
+                return Ok(result.Message);
+            }
+            else
+            {
+                return BadRequest(result.Message);
+            }
+        }
+
+        [AllowAnonymous]
         [HttpPost("register")]
         public ActionResult Register(VMUserRegisterPost model){
             var result = _userService.Register(model);
@@ -96,8 +144,6 @@ namespace ragther.service.Controllers
                 return BadRequest(result.Message);
             }
         }
-
-        
 
     }
 }
