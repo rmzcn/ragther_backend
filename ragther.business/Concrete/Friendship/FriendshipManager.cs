@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using ragther.business.Abstract;
 using ragther.business.Constants;
 using ragther.Core.Utilities.Results;
 using ragther.data.Abstract;
 using ragther.data.MessagesForRelations;
+using ragther.entity.ViewModels;
 
 namespace ragther.business.Concrete.Friendship
 {
@@ -234,7 +236,7 @@ namespace ragther.business.Concrete.Friendship
                 _profileDetailService.SetFriendCount(recipientUserModel.UserId);
 
                 var friendshipEntity = _friendshipRepository.Get( fr => 
-                    fr.SenderUserId == senderUserModel.UserId || recipientUserModel.UserId == fr.RecipientUserId
+                    fr.SenderUserId == senderUserModel.UserId && recipientUserModel.UserId == fr.RecipientUserId
                 );
 
                 //arkadaşlık durumun güncelleme
@@ -277,6 +279,85 @@ namespace ragther.business.Concrete.Friendship
             return new SuccessResult(Messages.UsersAreFriends);
         }
 
+        public IResult GetFriendship(string requesterUserName, string targetUserName)
+        {
+            var requesterUserModel = _userRepository.Get(u => u.UserName == requesterUserName);
+            var targetUserModel = _userRepository.Get(u => u.UserName == targetUserName);
+            if (requesterUserModel == null || targetUserModel == null)
+            {
+                return new ErrorResult(Messages.UserNotFound);
+            }
 
+            if (requesterUserName == targetUserName)
+            {
+                return new SuccessResult(GetFriendshipDataForApiResponse.Friends.ToString());
+            }
+
+            var friendship = _friendshipRepository.Get(fr => 
+                (fr.SenderUserId == requesterUserModel.UserId || fr.RecipientUserId == requesterUserModel.UserId)
+                    &&
+                (fr.SenderUserId == targetUserModel.UserId || fr.RecipientUserId == targetUserModel.UserId)
+            );
+            
+            if (friendship == null)
+            {
+                return new SuccessResult(GetFriendshipDataForApiResponse.NotFriends.ToString());
+            }
+
+            if (friendship.SenderUserId == requesterUserModel.UserId && friendship.FriendshipConditionId == FriendshipAndFriendshipCondition.RequestWaiting)
+            {
+                return new SuccessResult(GetFriendshipDataForApiResponse.Sender_RequestWaiting.ToString());
+            }
+            else if (friendship.RecipientUserId == requesterUserModel.UserId && friendship.FriendshipConditionId == FriendshipAndFriendshipCondition.RequestWaiting )
+            {
+                return new SuccessResult(GetFriendshipDataForApiResponse.Recipient_RequestWaiting.ToString());
+            }
+
+            if (friendship.FriendshipConditionId == FriendshipAndFriendshipCondition.Friend)
+            {
+                return new SuccessResult(GetFriendshipDataForApiResponse.Friends.ToString());
+            }
+
+            return new ErrorResult();
+        }
+
+        public IDataResult<List<VMInnerUserInfo>> GetFriendsForChatService(string requesterUserName)
+        {
+            var userModel = _userRepository.Get(u => u.UserName == requesterUserName);
+            if (userModel == null)
+            {
+                return new ErrorDataResult<List<VMInnerUserInfo>>(Messages.UserNotFound);
+            }
+
+            List<entity.Friendship> friends = _friendshipRepository.GetListByFilterOrAll(fr => 
+                (fr.SenderUserId == userModel.UserId || fr.RecipientUserId == userModel.UserId)
+                    &&
+                (fr.FriendshipConditionId == FriendshipAndFriendshipCondition.Friend)
+            );
+
+            List<VMInnerUserInfo> usersFriends = new List<VMInnerUserInfo>();
+            int friendUserId;
+            entity.User friendUser;
+            foreach (var friend in friends)
+            {  
+                if (friend.RecipientUserId == userModel.UserId)
+                {
+                    friendUserId = friend.SenderUserId;
+                }
+                else
+                {
+                    friendUserId = friend.RecipientUserId;
+                }
+                friendUser = _userRepository.Get( u => u.UserId == friendUserId);
+                usersFriends.Add( new VMInnerUserInfo{
+                    FirstName = friendUser.FirstName,
+                    LastName = friendUser.LastName,
+                    ProfileImageURL = friendUser.ProfileImageURL,
+                    UserId = friendUser.UserId,
+                    UserName = friendUser.UserName
+                });
+            }
+            return new SuccessDataResult<List<VMInnerUserInfo>>(usersFriends);
+        }
     }
 }

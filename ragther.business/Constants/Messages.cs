@@ -69,5 +69,11 @@ namespace ragther.business.Constants
         public static string WorkerAlreadyExistInTodo = "0064_Worker Already Exist In Todo";
         public static string WorkerAddedToTodo = "0065_Worker Added To Todo";
         public static string ReadedAllNotices = "0066_Readed All Notices";
+        public static string OfferAccepted = "0067_Offer Accepted";
+        public static string OfferRejected = "0068_Offer Rejected";
+        public static string ChatCreated = "0068_Chat Created";
+        public static string ChatNotFound = "0069_Chat Created";
+        public static string NoNewMessages = "0070_No New Messages";
+        public static string MessageSended = "0071_Message Sended";
     }
 }

@@ -22,6 +22,8 @@ namespace ragther.data.Concrete.EFCore
         public DbSet<TodoTag> TodoTags { get; set; }
         public DbSet<TokenCondition> TokenConditions { get; set; }
         public DbSet<WorkWith> WorkWiths { get; set; }
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionBuilder){

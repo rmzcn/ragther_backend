@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ragther.business.Abstract;
 using ragther.business.Constants;
+using ragther.business.Helpers;
 using ragther.entity;
 using ragther.entity.ViewModels;
 
@@ -34,7 +35,7 @@ namespace ragther.service.Controllers
                 if (result.Success)
                 {
                     //message contains todo ID
-                    return Ok(result.Message);
+                    return Ok(JSONHelper.ConvertMessageToJSONFormat("message",result.Message));
                 }
                 else
                 {
@@ -43,7 +44,7 @@ namespace ragther.service.Controllers
             }
             catch (System.Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",ex.Message));
             }
         }
 
@@ -56,11 +57,11 @@ namespace ragther.service.Controllers
                 var result = _todoService.Update(model,requesterUserName);
                 if (result.Success)
                 {
-                    return Ok(result.Message);
+                    return Ok(JSONHelper.ConvertMessageToJSONFormat("message",result.Message));
                 }
                 else
                 {
-                    throw new Exception(result.Message);
+                    throw new Exception(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
                 }
             // }
             // catch (System.Exception ex)
@@ -79,11 +80,11 @@ namespace ragther.service.Controllers
             var result = _todoService.UploadTodoImage(todoId,requesterUserName,file);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(JSONHelper.ConvertMessageToJSONFormat("message",result.Message));
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("message",result.Message));
             }
         }
 
@@ -100,12 +101,12 @@ namespace ragther.service.Controllers
                 }
                 else
                 {
-                    throw new Exception(result.Message);
+                    throw new Exception(JSONHelper.ConvertMessageToJSONFormat("message",result.Message));
                 }
             }
             catch (System.Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",ex.Message));
             }
         }
 
@@ -121,7 +122,7 @@ namespace ragther.service.Controllers
             }
             else if (result.Message == Messages.UserNotFound)
             {
-                return NotFound(Messages.UserNotFound);
+                return NotFound(JSONHelper.ConvertMessageToJSONFormat("message",Messages.UserNotFound));
             }
             else if (result.Message == Messages.UsersAreNotFriends)
             {
@@ -129,7 +130,7 @@ namespace ragther.service.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
             }
             
         }
@@ -142,7 +143,15 @@ namespace ragther.service.Controllers
             // bundan sonra jwt yapısı kullanılacaktır
             
             var result = _todoService.GetTodosByLocation(latitude,longitude,requesterUserName,near);
-            return Ok(result.Data);
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+            else
+            {
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
+            }
+            
             // if data is null: returns 204 NO CONTENT
         }
 
@@ -160,7 +169,7 @@ namespace ragther.service.Controllers
                 return Unauthorized();
             }
             
-            return NotFound(result.Message);
+            return NotFound(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
         }
 
         [AllowAnonymous]
@@ -175,7 +184,7 @@ namespace ragther.service.Controllers
                 return Ok(result.Data);
             }
             
-            return NotFound(result.Message);
+            return NotFound(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
         }
     }
 }

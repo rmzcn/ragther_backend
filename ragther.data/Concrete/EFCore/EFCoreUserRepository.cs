@@ -28,6 +28,8 @@ namespace ragther.data.Concrete.EFCore
                         FirstName = u.FirstName,
                         LastName = u.LastName,
                         CreatedAt = u.CreatedAt,
+                        Email = u.Email,
+                        ProfileImageURL = u.ProfileImageURL,
                         ProfileDetail = _mapper.Map<VMUserProfileDetailGet>(u.ProfileDetail)
                     }
                 )
@@ -50,7 +52,8 @@ namespace ragther.data.Concrete.EFCore
                         LastName = u.LastName
                     }
                 )
-                .Where( u => u.UserName.Contains(filterString) 
+                .Where( u => 
+                    u.UserName.Contains(filterString) 
                     || u.FirstName.Contains(filterString)
                     || u.LastName.Contains(filterString))
                 .ToList();

@@ -12,6 +12,7 @@ namespace ragther.entity.ViewModels
         public DateTime UntilWhen { get; set; }
         public string LocationLatitude { get; set; }
         public string LocationLongitude { get; set; }
+        public string Address { get; set; }
         public List<string> tags { get; set; }
 
         // {

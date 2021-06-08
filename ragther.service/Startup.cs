@@ -35,6 +35,8 @@ using ragther.business.Concrete.Like;
 using ragther.business.Concrete.MailUpdate;
 using ragther.business.Concrete.Remind;
 using ragther.business.Concrete.TagsOfInterest;
+using ragther.business.Concrete.Chat;
+using ragther.business.Concrete.Message;
 
 namespace ragther.service
 {
@@ -50,6 +52,16 @@ namespace ragther.service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options => 
+            { 
+                options.AddPolicy("CorsPolicy", builder => builder
+                .WithOrigins("http://localhost:4200")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
+            });
+            services.AddSignalR();
+
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 );
@@ -60,18 +72,9 @@ namespace ragther.service
                 o.MultipartBodyLengthLimit = int.MaxValue;
                 o.MemoryBufferThreshold = int.MaxValue;
             });
+                       
+
             
-
-            services.AddCors(options => 
-            { 
-                options.AddPolicy("CorsPolicy", builder => builder
-                .WithOrigins("http://localhost:4200")
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
-            });
-
-            services.AddSignalR();
 
             // Injection for Repositories -- START
             // Entitiy Framework
@@ -92,6 +95,8 @@ namespace ragther.service
             services.AddScoped<ITokenConditionRepository,EFCoreTokenConditionRepository>();
             services.AddScoped<IUserRepository,EFCoreUserRepository>();
             services.AddScoped<IWorkWithRepository,EFCoreWorkWithRepository>();
+            services.AddScoped<IMessageRepository,EFCoreMessageRepository>();
+            services.AddScoped<IChatRepository,EFCoreChatRepository>();
             // Injection for Repositories -- END
 
             // Injection for Services -- START
@@ -109,6 +114,8 @@ namespace ragther.service
             services.AddScoped<IMailUpdateService,MailUpdateManager>();
             services.AddScoped<IRemindService,RemindManager>();
             services.AddScoped<ITagsOfInterestService,TagsOfInterestManager>();
+            services.AddScoped<IChatService,ChatManager>();
+            services.AddScoped<IMessageService,MessageManager>();
 
             // Injection for Repositories -- END
 
@@ -133,9 +140,10 @@ namespace ragther.service
                 RequestPath = new PathString("/Resources")
             });
 
-            app.UseCors("CorsPolicy");
-
+            
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 
@@ -143,6 +151,7 @@ namespace ragther.service
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<ChatHub>("/chat");
+                endpoints.MapHub<NoticeHub>("/notice");
             });
         }
     }

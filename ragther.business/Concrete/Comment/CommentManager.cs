@@ -53,6 +53,7 @@ namespace ragther.business.Concrete.Comment
                 
                 //creating notice
                 _noticeService.CreateNotice(user.UserId, commentCreatorUser.UserId, NoticeTypes.OfferAccepted);
+                return new SuccessResult(Messages.OfferAccepted);
             }
             return new ErrorResult(Messages.CommentIsNotOffer);
         }
@@ -77,6 +78,7 @@ namespace ragther.business.Concrete.Comment
                 
                 //creating notice
                 _noticeService.CreateNotice(user.UserId, commentCreatorUser.UserId, NoticeTypes.OfferRejected);
+                return new SuccessResult(Messages.OfferRejected);
             }
             return new ErrorResult(Messages.CommentIsNotOffer);
         }
@@ -104,7 +106,10 @@ namespace ragther.business.Concrete.Comment
             {
                 comment.offerStatus = OfferStatus.Waiting;
             }
-            comment.offerStatus = OfferStatus.NoOffer;
+            else
+            {
+                comment.offerStatus = OfferStatus.NoOffer;
+            }
             _commentRepository.Add(comment);
 
             //creating notice
@@ -130,6 +135,9 @@ namespace ragther.business.Concrete.Comment
             {
                 return new ErrorResult(Messages.CommentNotFound);
             }
+            var todo = _todoRepository.Get(t => t.TodoId == comment.TodoId);
+            todo.CommentCount --;
+            _todoRepository.Update(todo);
             _commentRepository.Delete(comment);
             return new SuccessResult(Messages.CommentDeleted);
         }
@@ -150,14 +158,16 @@ namespace ragther.business.Concrete.Comment
             
             var comments = _commentRepository.GetListByFilterOrAll(c => c.TodoId == todoID);
             List<VMCommentGet> result = _mapper.Map<List<VMCommentGet>>(comments);
-            foreach (var comment in comments)
+            for(int i = 0; i<comments.Count; i++) //(var comment in comments)
             {
-                comment.User = _userRepository.Get(u => u.UserId == comment.UserId);
+                comments[i].User = _userRepository.Get(u => u.UserId == comments[i].UserId);
+                result[i].userInfo = _mapper.Map<VMInnerUserInfo>(comments[i].User);
+                
             }
-            foreach (var com in result)
-            {
-                com.userInfo =  _mapper.Map<VMInnerUserInfo>(comments.Where(c => c.TodoId == com.TodoId).FirstOrDefault().User);
-            }
+            // foreach (var com in result)
+            // {
+            //     com.userInfo =  _mapper.Map<VMInnerUserInfo>(comments.Where(c => c.UserId == ).FirstOrDefault().User);
+            // }
             return new SuccessDataResult<List<VMCommentGet>>(result);
         }
 

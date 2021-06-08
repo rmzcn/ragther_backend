@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ragther.business.Abstract;
 using ragther.business.Constants;
+using ragther.business.Helpers;
 using ragther.Core.Utilities.Results;
 using ragther.entity;
 using ragther.entity.ViewModels;
@@ -29,7 +30,7 @@ namespace ragther.service.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        [Route("{userName}/profile/{requesterUserName}")]
+        [Route("{userName}/profile")]
         public ActionResult GetUserForProfile(string userName, string requesterUserName){
             // TODO - Şimdilik userid query string ile alınıyor ancak ileride token ile bir service kullanarak kullanıcı adı alınıp GetUserProfile'a parametre olarak gidebilir.
             // TODO - Bu yöntem sadece geliştirme amaçlı bu şekilde kullanılmaktadır ve GÜVENLİ DEĞİLDİR. Nihai sürümde yer almayacaktır.
@@ -42,15 +43,15 @@ namespace ragther.service.Controllers
             {
                 if (result.Message == Messages.UserNotFound)
                 {
-                    return NotFound(Messages.UserNotFound);
+                    return NotFound(JSONHelper.ConvertMessageToJSONFormat("result",result.Message));
                 }
                 else if (result.Message == Messages.UsersAreNotFriends)
                 {
-                    return Unauthorized();
+                    return Unauthorized(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
                 }
                 else
                 {
-                    return BadRequest();
+                    return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
                 }
             }
         }
@@ -58,16 +59,16 @@ namespace ragther.service.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("password/refresh")]
-        public ActionResult ForgetPassword(string requesterUserName)
+        public ActionResult ForgetPassword(string newEmail)
         {
-            var result = _userService.ForgetPassword(requesterUserName);
+            var result = _userService.ForgetPassword(newEmail);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(JSONHelper.ConvertMessageToJSONFormat("result",result.Message));
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
             }
         }
 
@@ -79,11 +80,11 @@ namespace ragther.service.Controllers
             var result = _userService.SetPassword(requesterUserName,oldPassword,newPassword);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(JSONHelper.ConvertMessageToJSONFormat("result",result.Message));
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
             }
         }
 
@@ -95,11 +96,11 @@ namespace ragther.service.Controllers
             var result = _userService.GetPassword(requesterUserName);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(JSONHelper.ConvertMessageToJSONFormat("password",result.Message));
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
             }
         }
 
@@ -109,11 +110,11 @@ namespace ragther.service.Controllers
             var result = _userService.Register(model);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(JSONHelper.ConvertMessageToJSONFormat("result",result.Message));
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
             }
         }
 
@@ -127,12 +128,12 @@ namespace ragther.service.Controllers
             }
             else
             {
-                return Unauthorized(result.Message);
+                return Unauthorized(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
             }
         }
 
         [AllowAnonymous]
-        [HttpPost("search/{filterString}")]
+        [HttpGet("search/{filterString}")]
         public ActionResult GetUsersBySearchFilterString(string filterString){
             var result = _userService.GetUsersBySearchFilterString(filterString);
             if (result.Success)
@@ -141,7 +142,7 @@ namespace ragther.service.Controllers
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
             }
         }
 

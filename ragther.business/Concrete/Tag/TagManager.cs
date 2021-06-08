@@ -30,7 +30,7 @@ namespace ragther.business.Concrete.Tag
             {
                 return new ErrorResult(Messages.UserNotFound);
             }
-            if (_tagRepository.Get(t => t.Name.ToLower() == model.Name.ToLower()) == null)
+            if (_tagRepository.Get(t => t.Name.ToLower() == model.Name.ToLower()) != null)
             {
                 return new ErrorResult(Messages.TagAlreadyExists);
             }

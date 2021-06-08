@@ -15,6 +15,7 @@ namespace ragther.entity
         public DateTime UntilWhen { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public string Address { get; set; }
         public string LocationLatitude { get; set; }
         public string LocationLongitude { get; set; }
         public int TodoConditionId { get; set; }

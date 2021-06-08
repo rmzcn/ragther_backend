@@ -11,5 +11,6 @@ namespace ragther.business.Abstract
         IDataResult<List<VMNoticeGet>> GetNotices(string requesterUserName);
         IResult DeleteAllNotices(string requesterUserName);
         IResult ReadNotices(string requesterUserName);
+        IResult GetUnreadNoticesCount(string requesterUserName);
     }
 }

@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using ragther.Core.Utilities.Results;
 using ragther.entity;
+using ragther.entity.ViewModels;
 
 namespace ragther.business.Abstract
 {
@@ -12,5 +14,7 @@ namespace ragther.business.Abstract
         IResult RejectFriendshipRequest(string rejecterUserName, string senderUserName);
         IResult RevokeFriendshipRequest(string revokerUserName, string recipientUserName);
         IDataResult<String> GetFriendshipCondition(string requesterUserName, string targetUserName);
+        IResult GetFriendship(string requesterUserName, string targetUserName);
+        IDataResult<List<VMInnerUserInfo>> GetFriendsForChatService(string requesterUserName);
     }
 }

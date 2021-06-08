@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ragther.business.Abstract;
 using ragther.business.Constants;
+using ragther.business.Helpers;
 using ragther.entity;
 using ragther.entity.ViewModels;
 
@@ -36,7 +37,7 @@ namespace ragther.service.Controllers
                 var result = _commentService.Create(model);
                 if (result.Success)
                 {
-                    return Ok(result.Message);
+                    return Ok(JSONHelper.ConvertMessageToJSONFormat("message",result.Message));
                 }
                 else
                 {
@@ -45,7 +46,7 @@ namespace ragther.service.Controllers
             }
             catch (System.Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",ex.Message));
             }
         }
 
@@ -57,11 +58,11 @@ namespace ragther.service.Controllers
             var result = _commentService.Delete(commentID,requesterUserName);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(JSONHelper.ConvertMessageToJSONFormat("message",result.Message));
             }
             else
             {
-                return NotFound(result.Message);
+                return NotFound(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
             }      
                
         }
@@ -77,8 +78,41 @@ namespace ragther.service.Controllers
             }
             else
             {
-                return NotFound(result.Message);
+                return NotFound(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
             }  
         }
+    
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("{commentID}/accept-offer")]
+        public ActionResult AcceptOffer(int commentID, string requesterUserName)
+        {
+            var result = _commentService.AcceptOffer(commentID,requesterUserName);
+            if (result.Success)
+            {
+                return Ok(JSONHelper.ConvertMessageToJSONFormat("message",result.Message));
+            }
+            else
+            {
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("{commentID}/reject-offer")]
+        public ActionResult RejectOffer(int commentID, string requesterUserName)
+        {
+            var result = _commentService.RejectOffer(commentID,requesterUserName);
+            if (result.Success)
+            {
+                return Ok(JSONHelper.ConvertMessageToJSONFormat("message",result.Message));
+            }
+            else
+            {
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
+            }
+        }
+    
     }
 }

@@ -31,6 +31,11 @@ namespace ragther.business.Concrete.Notice
             // They must be already checked before using this function.
             // if notice type is comment, like or remind relevantIdOrUrl must be todo id
 
+            if ((noticeTypeId == NoticeTypes.Like || noticeTypeId == NoticeTypes.Comment || noticeTypeId == NoticeTypes.Remind) && userIdFrom == userIdTo)
+            {
+                return new SuccessResult();
+            }
+
             entity.Notice notice = new entity.Notice(){
                 NoticeTypeId = noticeTypeId,
                 RelevantUserId = userIdTo,
@@ -39,6 +44,8 @@ namespace ragther.business.Concrete.Notice
                 isRead = false,
                 CreatedAt = DateTime.Now
             };
+            
+
             _noticeRepository.Add(notice);
             return new SuccessResult();
         }
@@ -67,10 +74,39 @@ namespace ragther.business.Concrete.Notice
                 return new ErrorDataResult<List<VMNoticeGet>>(Messages.UserNotFound);
             }
             var dbNotices = _noticeRepository.GetListByFilterOrAll( n => n.RelevantUser.UserName == requesterUserName);
+
             dbNotices.Sort((x, y) => DateTime.Compare(y.CreatedAt, x.CreatedAt));
 
-            var notices = _mapper.Map<List<VMNoticeGet>>(dbNotices);
+            // var notices = _mapper.Map<List<VMNoticeGet>>(dbNotices);
+
+            // Manuel mapping --Start
+            var notices =  new List<VMNoticeGet>();
+            foreach (var notice in dbNotices)
+            {
+                notices.Add(new VMNoticeGet {
+                    OwnerUserName = _userRepository.Get( u => notice.OwnerUserId == u.UserId).UserName,
+                    RelevantUserName = _userRepository.Get( u => notice.RelevantUserId == u.UserId).UserName,
+                    NoticeId = notice.NoticeId,
+                    isRead = notice.isRead,
+                    NoticeTypeId = notice.NoticeTypeId,
+                    RelevantURL = notice.RelevantURL,
+                    CreatedAt = notice.CreatedAt,
+                });               
+            }
+            // Manuel mapping --END
+
             return new SuccessDataResult<List<VMNoticeGet>>(notices);
+        }
+
+        public IResult GetUnreadNoticesCount(string requesterUserName)
+        {
+            if (_userRepository.Get(u => u.UserName == requesterUserName) == null)
+            {
+                return new ErrorResult(Messages.UserNotFound);
+            }
+
+            var unreadNoticesCount = _noticeRepository.GetListByFilterOrAll(n => n.RelevantUser.UserName == requesterUserName && !n.isRead).Count;
+            return new SuccessResult(unreadNoticesCount.ToString());
         }
 
         public IResult ReadNotices(string requesterUserName)

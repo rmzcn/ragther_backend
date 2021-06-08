@@ -38,7 +38,7 @@ namespace ragther.business.Concrete.User
                 if (!this.IsMailRegistered(newUser.Email).Success
                 && !this.IsUserNameRegistered(newUser.UserName).Success)
                 {
-                    return new ErrorResult(Messages.UserNameAlreadyTaken+newUser.UserName + "\n" + Messages.EmailAlreadyTaken+newUser.Email);
+                    return new ErrorResult(Messages.UserNameAlreadyTaken+newUser.UserName + " " + Messages.EmailAlreadyTaken+newUser.Email);
                 }
 
                 if(!this.IsMailRegistered(newUser.Email).Success)
@@ -54,6 +54,7 @@ namespace ragther.business.Concrete.User
                 {
                     entity.User user = _mapper.Map<entity.User>(newUser);
                     user.CreatedAt = DateTime.Now;
+                    user.ProfileImageURL = String.Format("Resources\\Images\\ProfileImages\\{0}.png", new Random().Next(1,5));
                     _userRepository.Add(user);
                     _profileDetailRepository.Add(new entity.ProfileDetail(){
                         UserId = user.UserId,
@@ -83,7 +84,12 @@ namespace ragther.business.Concrete.User
             // if (friendshipServiceData.Success || userName == requesterUserName)
             // {
                 var result = _userRepository.GetUserProfile(userName);
-                _noticeService.CreateNotice(requesterUserModel.UserId, targetUserModel.UserId, NoticeTypes.LookedProfile);
+
+                // if user gets own profile details, don't create notice
+                if (userName != requesterUserName)
+                {
+                    _noticeService.CreateNotice(requesterUserModel.UserId, targetUserModel.UserId, NoticeTypes.LookedProfile);
+                }
                 return new SuccessDataResult<VMUserProfileGet>(result);
             // }
             // else if (friendshipServiceData.Message == Messages.UsersAreNotFriends)
@@ -138,11 +144,9 @@ namespace ragther.business.Concrete.User
             return new SuccessDataResult<List<VMUserSearchResultGet>>(result);
         }
 
-        public IResult ForgetPassword(string requesterUserName)
+        public IResult ForgetPassword(string newEmail)
         {
-            //TODO Şİfreyi db de de güncelle
-            //TODO Şifre kısa olsun 
-            var user = _userRepository.Get( u => u.UserName == requesterUserName);
+            var user = _userRepository.Get( u => u.Email == newEmail);
             if (user == null)
             {
                 return new ErrorResult(Messages.UserNotFound);

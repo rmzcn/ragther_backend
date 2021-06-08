@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ragther.business.Abstract;
 using ragther.business.Constants;
+using ragther.business.Helpers;
 using ragther.Core.Utilities.Results;
 using ragther.entity;
 using ragther.entity.ViewModels;
@@ -35,11 +36,11 @@ namespace ragther.service.Controllers
             var result = _friendshipService.CreateFriendshipRequest(senderUserName,recipientUserName);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(JSONHelper.ConvertMessageToJSONFormat("message",result.Message));
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
             }
         }
 
@@ -51,11 +52,11 @@ namespace ragther.service.Controllers
             var result = _friendshipService.RejectFriendshipRequest(rejecterUserName,senderUserName);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(JSONHelper.ConvertMessageToJSONFormat("message",result.Message));
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
             }
         }
 
@@ -67,11 +68,11 @@ namespace ragther.service.Controllers
             var result = _friendshipService.RevokeFriendshipRequest(revokerUserName,recipientUserName);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(JSONHelper.ConvertMessageToJSONFormat("message",result.Message));
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
             }
         }
 
@@ -83,31 +84,45 @@ namespace ragther.service.Controllers
             var result = _friendshipService.CreateFriendship(senderUserName,accepterUserName);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(JSONHelper.ConvertMessageToJSONFormat("message",result.Message));
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
             }
         }
 
         [AllowAnonymous]
         [HttpGet]
         [Route("get-status")]
-        public ActionResult GetFriendshipCondition(string requesterUserName, string targetUserName)
+        public ActionResult GetFriendship(string requesterUserName, string targetUserName)
         {
-            var result = _friendshipService.GetFriendshipCondition(requesterUserName,targetUserName);
+            var result = _friendshipService.GetFriendship(requesterUserName,targetUserName);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(JSONHelper.ConvertMessageToJSONFormat("message",result.Message));
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
             }
         }
 
-
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("get-friends")]
+        public ActionResult GetFriends(string requesterUserName)
+        {
+            var result = _friendshipService.GetFriendsForChatService(requesterUserName);
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+            else
+            {
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
+            }
+        }
 
 
     }

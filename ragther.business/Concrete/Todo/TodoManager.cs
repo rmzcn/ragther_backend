@@ -19,6 +19,9 @@ namespace ragther.business.Concrete.Todo
         ITodoRepository _todoRepository;
         IUserRepository _userRepository;
         IMapper _mapper;
+        ILikeRepository _likeRepository;
+        IRemindRepository _remindRepository;
+        ICommentRepository _commentRepository;
         IFriendshipService _friendshipService;
         IProfileDetailService _profileDetailService;
         ITodoTagRepository _todoTagRepository;
@@ -26,7 +29,7 @@ namespace ragther.business.Concrete.Todo
         IWorkWithService _workWithService;
         ITagRepository _tagRepository;
         IWorkWithRepository _workWithRepository;
-        public TodoManager(ITodoRepository todoRepository, IUserRepository userRepository, IMapper mapper, IFriendshipService friendshipService, IProfileDetailService profileDetailService, ITodoTagRepository todoTagRepository, ITagRepository tagRepository,IWorkWithRepository workWithRepository, ITodoTagService todoTagService, IWorkWithService workWithService){
+        public TodoManager(ITodoRepository todoRepository, IUserRepository userRepository, IMapper mapper, IFriendshipService friendshipService, IProfileDetailService profileDetailService, ITodoTagRepository todoTagRepository, ITagRepository tagRepository,IWorkWithRepository workWithRepository, ITodoTagService todoTagService, IWorkWithService workWithService, ICommentRepository commentRepository, ILikeRepository likeRepository, IRemindRepository remindRepository){
             _todoRepository = todoRepository;
             _userRepository = userRepository;
             _todoTagRepository = todoTagRepository;
@@ -37,6 +40,9 @@ namespace ragther.business.Concrete.Todo
             _todoTagService = todoTagService;
             _mapper = mapper;
             _workWithRepository = workWithRepository;
+            _commentRepository = commentRepository;
+            _likeRepository = likeRepository;
+            _remindRepository = remindRepository;
         }
 
         //WORKING
@@ -45,6 +51,10 @@ namespace ragther.business.Concrete.Todo
             entity.Todo todo = _mapper.Map<entity.Todo>(newTodo);
             todo.CreatedAt = DateTime.Now;
             todo.TodoConditionId = TodoAndTodoCondition.working;
+            if (String.IsNullOrEmpty(newTodo.Address))
+            {
+                todo.Address = "Konum Yok.";
+            }
             _todoRepository.Add(todo);
             
             foreach (var todoTagName in newTodo.tags)
@@ -62,6 +72,39 @@ namespace ragther.business.Concrete.Todo
             {
                 return new ErrorResult(Messages.TodoNotFound);
             }
+
+            //deleting relational other entities
+            var todoReminds = _remindRepository.GetListByFilterOrAll(r => r.TodoId == dTodo.TodoId);
+            var todoLikes = _likeRepository.GetListByFilterOrAll(l => l.TodoId == dTodo.TodoId);
+            var todoComments = _commentRepository.GetListByFilterOrAll(c => c.TodoId == dTodo.TodoId);
+            var todoTags = _todoTagRepository.GetListByFilterOrAll(tt => tt.TodoId == dTodo.TodoId);
+            var todoWorkers = _workWithRepository.GetListByFilterOrAll(w => w.TodoId == dTodo.TodoId);
+
+            foreach (var item in todoLikes)
+            {
+                _likeRepository.Delete(item);
+            }
+
+            foreach (var item in todoReminds)
+            {
+                _remindRepository.Delete(item);
+            }
+
+            foreach (var item in todoComments)
+            {
+                _commentRepository.Delete(item);
+            }
+
+            foreach (var item in todoTags)
+            {
+                _todoTagRepository.Delete(item);
+            }
+
+            foreach (var item in todoWorkers)
+            {
+                _workWithRepository.Delete(item);
+            }
+
             _todoRepository.Delete(dTodo);
             return new SuccessResult(Messages.TodoDeleted);
             
@@ -155,10 +198,9 @@ namespace ragther.business.Concrete.Todo
                     }
                 }
                 
-                
-
                 return new SuccessDataResult<VMTodoGet>(result);
             }
+
             else
             {
                 return new ErrorDataResult<VMTodoGet>(Messages.UsersAreNotFriends);
@@ -218,6 +260,20 @@ namespace ragther.business.Concrete.Todo
                     return new ErrorDataResult<List<VMTodoGet>>(todoList,Messages.InvalidLocation);
                 }
             }
+
+
+            entity.Todo expiredTodo = new entity.Todo();
+            foreach (var item in todoList)
+            {
+                if ((item.UntilWhen - DateTime.Now).TotalMinutes < 0)
+                {
+                    expiredTodo = _todoRepository.Get(t => t.TodoId == item.TodoId);
+                    expiredTodo.TodoConditionId = TodoAndTodoCondition.expired;
+                    _todoRepository.Update(expiredTodo);
+                    item.TodoCondition = TodoAndTodoCondition.getTodoConditionByID(TodoAndTodoCondition.expired);
+                }
+            }
+
             return new SuccessDataResult<List<VMTodoGet>>(todoList);
         }
 
@@ -315,6 +371,12 @@ namespace ragther.business.Concrete.Todo
                     
                     res.TodoCondition = TodoAndTodoCondition.getTodoConditionByID(todos.Where(t => t.TodoId == res.TodoId).FirstOrDefault().TodoConditionId);
                 }
+                
+                if (result.Count == 0)
+                {
+                    return new ErrorDataResult<List<VMTodoGet>>(Messages.TodoCountZero);
+                }
+                
                 return new SuccessDataResult<List<VMTodoGet>>(result);
 
             }
@@ -379,6 +441,10 @@ namespace ragther.business.Concrete.Todo
                     }
                 }
             }
+            if (result.Count == 0)
+                {
+                    return new ErrorDataResult<List<VMTodoGet>>(Messages.TodoCountZero);
+                }
             return new SuccessDataResult<List<VMTodoGet>>(result);
         }
 

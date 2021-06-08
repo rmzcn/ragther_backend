@@ -17,6 +17,27 @@ namespace ragther.data.Migrations
                 .HasAnnotation("ProductVersion", "3.1.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("ragther.entity.Chat", b =>
+                {
+                    b.Property<int>("ChatId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("FirstUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SecondUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ChatId");
+
+                    b.HasIndex("FirstUserId");
+
+                    b.HasIndex("SecondUserId");
+
+                    b.ToTable("Chats");
+                });
+
             modelBuilder.Entity("ragther.entity.Comment", b =>
                 {
                     b.Property<int>("ID")
@@ -145,6 +166,36 @@ namespace ragther.data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("MailUpdates");
+                });
+
+            modelBuilder.Entity("ragther.entity.Message", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("ChatId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("isRead")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("ChatId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("ragther.entity.Notice", b =>
@@ -296,6 +347,9 @@ namespace ragther.data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("Address")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<int>("CommentCount")
                         .HasColumnType("int");
 
@@ -437,6 +491,21 @@ namespace ragther.data.Migrations
                     b.ToTable("WorkWiths");
                 });
 
+            modelBuilder.Entity("ragther.entity.Chat", b =>
+                {
+                    b.HasOne("ragther.entity.User", "FirstUser")
+                        .WithMany("CreatedChats")
+                        .HasForeignKey("FirstUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ragther.entity.User", "SecondUser")
+                        .WithMany("AddedChats")
+                        .HasForeignKey("SecondUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ragther.entity.Comment", b =>
                 {
                     b.HasOne("ragther.entity.Comment", "ParentComment")
@@ -502,6 +571,21 @@ namespace ragther.data.Migrations
 
                     b.HasOne("ragther.entity.User", "User")
                         .WithMany("MailUpdates")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ragther.entity.Message", b =>
+                {
+                    b.HasOne("ragther.entity.Chat", "Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ragther.entity.User", "User")
+                        .WithMany("Messages")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

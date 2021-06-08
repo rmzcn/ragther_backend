@@ -29,6 +29,7 @@ namespace ragther.entity
 
         [InverseProperty("CreatorUser")]
         public List<Tag> CreatedTags { get; set; }
+        public List<Message> Messages { get; set; }
 
         [InverseProperty("SenderUser")]
         public List<Friendship> SendedRequests { get; set; }
@@ -51,6 +52,12 @@ namespace ragther.entity
 
         [InverseProperty("RelevantUser")]
         public List<Notice> RelevantNotices { get; set; }
+
+        [InverseProperty("FirstUser")]
+        public List<Chat> CreatedChats { get; set; }
+
+        [InverseProperty("SecondUser")]
+        public List<Chat> AddedChats { get; set; }
         
     }
 }

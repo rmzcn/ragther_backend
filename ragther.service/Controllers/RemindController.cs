@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ragther.business.Abstract;
 using ragther.business.Constants;
+using ragther.business.Helpers;
 using ragther.Core.Utilities.Results;
 using ragther.entity;
 using ragther.entity.ViewModels;
@@ -33,11 +34,11 @@ namespace ragther.service.Controllers
             var result = _remindService.Remind(todoId, requesterUserName);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(JSONHelper.ConvertMessageToJSONFormat("message",result.Message));
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(JSONHelper.ConvertMessageToJSONFormat("error",result.Message));
             }
         }
     }

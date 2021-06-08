@@ -44,6 +44,7 @@ namespace ragther.data.Concrete.EFCore
                         LikeCount = t.LikeCount,
                         RemindCount = t.RemindCount,
                         CommentCount = t.CommentCount,
+                        Address = t.Address,
                         userInfo = _mapper.Map<VMInnerUserInfo>(t.CreatorUser)
                     })
                     .ToList();
