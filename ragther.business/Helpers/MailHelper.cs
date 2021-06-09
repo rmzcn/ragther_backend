@@ -22,7 +22,7 @@ namespace ragther.business.Helpers
             msg.Priority = MailPriority.High;
 
             SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
-            NetworkCredential AccountInfo = new NetworkCredential("ragtherinfo@gmail.com", "123456789.Tr");
+            NetworkCredential AccountInfo = new NetworkCredential("ragtherinfo@gmail.com", "pass");
             smtp.UseDefaultCredentials = false;
             smtp.Credentials = AccountInfo;
             smtp.EnableSsl = true;
